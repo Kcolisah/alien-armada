@@ -23,14 +23,14 @@
 
   // Image assets
   const spriteSheet = new Image();
-  spriteSheet.src = "../images/alienArmada.png";
+  spriteSheet.src = "images/alienArmada.png";
 
   const specialEnemyImages = [
-    "../images/Baren.png",
-    "../images/Black_hole.png",
-    "../images/Ice.png",
-    "../images/Lava.png",
-    "../images/Terran.png"
+    "images/Baren.png",
+    "images/Black_hole.png",
+    "images/Ice.png",
+    "images/Lava.png",
+    "images/Terran.png"
   ].map(function(path) {
     const image = new Image();
     image.src = path;
