@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kruz's Alien Armada!</title>
+  <link rel="stylesheet" href="alienArmada.css">
+</head>
+<body data-mode="easy">
+  <main class="app-shell">
+    <section class="menu-panel">
+      <p class="eyebrow">RETRO ARCADE DEFENSE</p>
+      <h1>Kruz's Alien Armada!</h1>
+      <p class="intro-text">
+        Pick your mission, launch the ship, and defend the planet before the invasion reaches the surface.
+      </p>
+
+      <div class="mode-picker" id="modePicker">
+        <button class="mode-button is-active" data-mode="easy" type="button">Easy Mode</button>
+        <button class="mode-button" data-mode="hard" type="button">Hard Mode</button>
+      </div>
+
+      <div class="mode-card" id="modeCard">
+        <h2 id="modeTitle">Easy Mode</h2>
+        <p id="modeDescription">Clear 10 aliens with slower spawns and a calmer pace.</p>
+      </div>
+
+      <div class="menu-actions">
+        <button class="primary-button" id="startButton" type="button">Launch Mission</button>
+        <button class="secondary-button" id="restartButton" type="button">Restart Run</button>
+      </div>
+
+      <div class="menu-notes">
+        <p><span>Move:</span> Left / Right Arrow Keys</p>
+        <p><span>Fire:</span> Space Bar</p>
+        <p><span>Restart:</span> R</p>
+        <p><span>Back to Menu:</span> Escape</p>
+      </div>
+    </section>
+
+    <section class="game-panel">
+      <header class="hud">
+        <div class="hud-block">
+          <span class="hud-label">Mode</span>
+          <span class="hud-value" id="hudMode">Easy</span>
+        </div>
+
+        <div class="hud-block">
+          <span class="hud-label">Kills</span>
+          <span class="hud-value" id="hudScore">0</span>
+        </div>
+
+        <div class="hud-block">
+          <span class="hud-label">Goal</span>
+          <span class="hud-value" id="hudGoal">10</span>
+        </div>
+
+        <div class="hud-block hud-block-wide">
+          <span class="hud-label">Status</span>
+          <span class="hud-value" id="hudStatus">Ready to launch</span>
+        </div>
+
+        <button class="sound-button" id="soundToggle" type="button">Sound: On</button>
+      </header>
+
+      <div class="canvas-frame">
+        <canvas id="gameCanvas" width="480" height="320"></canvas>
+        <div class="canvas-message" id="canvasMessage">Choose a mode and launch your mission.</div>
+      </div>
+
+      <footer class="control-bar">
+        <span>Easy = 10 kills</span>
+        <span>Hard = 30 kills + faster enemies + special sprite wave</span>
+      </footer>
+    </section>
+  </main>
+
+  <audio id="music" loop preload="auto">
+    <source src="../sounds/retro-synthwave-background-soundtrack-341853.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="shootSound" preload="auto">
+    <source src="../sounds/shoot.mp3" type="audio/mpeg">
+    <source src="../sounds/shoot.ogg" type="audio/ogg">
+  </audio>
+
+  <audio id="explosionSound" preload="auto">
+    <source src="../sounds/explosion.mp3" type="audio/mpeg">
+    <source src="../sounds/explosion.ogg" type="audio/ogg">
+  </audio>
+
+  <audio id="gameOverSound" preload="auto">
+    <source src="../sounds/kl-peach-game-over-ii-135684.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="requestAnimationFramePolyfill.js"></script>
+  <script src="objects.js"></script>
+  <script src="collision.js"></script>
+  <script src="alienArmadaFinished.js"></script>
+</body>
+</html>

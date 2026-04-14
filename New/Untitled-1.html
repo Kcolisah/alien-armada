@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Your Name – Alien Armada!</title> <!-- ← Put *your* name here -->
+
+  <!-- Custom Font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- The stylesheet -->
+  <link rel="stylesheet" href="alienAttack.css">
+</head>
+<body>
+  <h1 style="font-family: 'Press Start 2P', monospace; text-align:center;">
+    Kenneth Alien Armada
+  </h1>
+
+  <!-- The sounds -->
+  <audio id="music" loop>
+    <source src="sounds/space_adventure_loop.mp3" type="audio/mpeg">
+    <source src="sounds/space_adventure_loop.ogg" type="audio/ogg">
+    Your browser does not support the audio element.
+  </audio>
+  <audio id="shootSound">
+    <source src="sounds/laser_shot.mp3" type="audio/mpeg">
+    <source src="sounds/laser_shot.ogg" type="audio/ogg">
+  </audio>
+  <audio id="explosionSound">
+    <source src="sounds/explosion_small.mp3" type="audio/mpeg">
+    <source src="sounds/explosion_small.ogg" type="audio/ogg">
+  </audio>
+
+  <!-- The canvas -->
+  <canvas width="480" height="320"></canvas>
+
+  <!-- Polyfills and game code -->
+  <script src="js/requestAnimationFramePolyfill.js"></script>
+  <script src="js/objects.js"></script>
+  <script src="js/collision.js"></script>
+  <script src="js/alienArmada1.js"></script>
+</body>
+</html>
