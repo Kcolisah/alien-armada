@@ -1,5 +1,4 @@
 (function() {
-  // Canvas and DOM references
   const canvas = document.getElementById("gameCanvas");
   const drawingSurface = canvas.getContext("2d");
 
@@ -11,6 +10,7 @@
   const hudMode = document.getElementById("hudMode");
   const hudScore = document.getElementById("hudScore");
   const hudGoal = document.getElementById("hudGoal");
+  const hudLives = document.getElementById("hudLives");
   const hudStatus = document.getElementById("hudStatus");
   const canvasMessage = document.getElementById("canvasMessage");
   const modeTitle = document.getElementById("modeTitle");
@@ -21,7 +21,6 @@
   const explosionSound = document.getElementById("explosionSound");
   const gameOverSound = document.getElementById("gameOverSound");
 
-  // Image assets
   const spriteSheet = new Image();
   spriteSheet.src = "images/alienArmada.png";
 
@@ -37,7 +36,6 @@
     return image;
   });
 
-  // Mode configuration
   const MODE_CONFIG = {
     easy: {
       label: "Easy",
@@ -65,7 +63,6 @@
     }
   };
 
-  // Game state
   const STATE = {
     MENU: "menu",
     PLAYING: "playing",
@@ -78,6 +75,8 @@
     muted: false,
     score: 0,
     goal: MODE_CONFIG.easy.goal,
+    lives: 3,
+    maxLives: 3,
     spawnInterval: MODE_CONFIG.easy.spawnInterval,
     spawnTimer: 0,
     lastShotTime: 0,
@@ -95,7 +94,6 @@
     cannon: null
   };
 
-  // Initial setup
   buildStarfield();
   createCannon();
   updateModeUI();
@@ -105,7 +103,6 @@
   attachEventListeners();
   startLoop();
 
-  // Input and menu events
   function attachEventListeners() {
     startButton.addEventListener("click", function() {
       startGame(false);
@@ -166,7 +163,6 @@
     });
   }
 
-  // Game start, restart, and menu helpers
   function selectMode(mode) {
     if (!MODE_CONFIG[mode]) {
       return;
@@ -200,6 +196,7 @@
     game.enemies = [];
     game.missiles = [];
     game.explosions = [];
+    stopMusic();
     updateHud();
     updateCanvasMessage("Menu ready. Choose your mode and launch again.");
   }
@@ -209,6 +206,7 @@
 
     game.score = 0;
     game.goal = config.goal;
+    game.lives = game.maxLives;
     game.spawnInterval = config.spawnInterval;
     game.spawnTimer = 0;
     game.lastShotTime = 0;
@@ -220,7 +218,6 @@
     game.cannon.vx = 0;
   }
 
-  // Core animation loop
   function startLoop() {
     let lastTime = performance.now();
 
@@ -255,7 +252,6 @@
     updateHud();
   }
 
-  // Player logic
   function createCannon() {
     game.cannon = makeSprite({
       sourceX: 0,
@@ -321,7 +317,6 @@
     }
   }
 
-  // Enemy spawning and movement
   function spawnEnemies() {
     game.spawnTimer += 1;
 
@@ -395,17 +390,29 @@
         enemy.frameTimer -= 1;
         if (enemy.frameTimer <= 0) {
           game.enemies.splice(index, 1);
+          continue;
         }
       }
 
       if (enemy.y > canvas.height + enemy.height) {
-        endGame(false);
-        return;
+        enemyPassed(index);
       }
     }
   }
 
-  // Collision handling
+  function enemyPassed(enemyIndex) {
+    game.enemies.splice(enemyIndex, 1);
+    game.lives -= 1;
+
+    if (game.lives <= 0) {
+      game.lives = 0;
+      endGame(false);
+      return;
+    }
+
+    updateCanvasMessage("Enemy slipped through. " + game.lives + " lives remaining.");
+  }
+
   function checkCollisions() {
     for (let enemyIndex = game.enemies.length - 1; enemyIndex >= 0; enemyIndex -= 1) {
       const enemy = game.enemies[enemyIndex];
@@ -465,7 +472,6 @@
     }
   }
 
-  // State changes
   function checkWinCondition() {
     if (game.score >= game.goal) {
       endGame(true);
@@ -473,14 +479,25 @@
   }
 
   function endGame(didWin) {
+    if (game.state === STATE.OVER) {
+      return;
+    }
+
     game.state = STATE.OVER;
     game.resultText = didWin ? "EARTH SAVED!" : "EARTH DESTROYED!";
-    updateCanvasMessage(didWin ? "Mission complete. Press Restart Run or R to go again." : "Mission failed. Press Restart Run or R to try again.");
-    hudStatus.textContent = didWin ? "Victory" : "Mission Failed";
-    playSound(gameOverSound, 0.36);
+    game.keys.shoot = false;
+    stopMusic();
+
+    if (didWin) {
+      updateCanvasMessage("Mission complete. Press Restart Run or R to go again.");
+      hudStatus.textContent = "Victory";
+    } else {
+      updateCanvasMessage("Mission failed. Press Restart Run or R to try again.");
+      hudStatus.textContent = "Mission Failed";
+      playSound(gameOverSound, 0.36);
+    }
   }
 
-  // HUD and menu text
   function updateModeUI() {
     const config = MODE_CONFIG[game.selectedMode];
 
@@ -500,6 +517,10 @@
     hudScore.textContent = String(game.score);
     hudGoal.textContent = String(config.goal);
 
+    if (hudLives) {
+      hudLives.textContent = String(game.lives);
+    }
+
     if (game.state === STATE.PLAYING) {
       hudStatus.textContent = config.status;
     } else if (game.state === STATE.OVER) {
@@ -513,9 +534,10 @@
     canvasMessage.textContent = message;
   }
 
-  // Audio controls
   function startMusic() {
+    stopMusic();
     applyMuteState();
+    music.currentTime = 0;
     music.volume = game.muted ? 0 : 0.24;
 
     const playPromise = music.play();
@@ -524,17 +546,21 @@
     }
   }
 
+  function stopMusic() {
+    music.pause();
+    music.currentTime = 0;
+  }
+
   function applyMuteState() {
-    const volume = game.muted ? 0 : 1;
     music.muted = game.muted;
     shootSound.muted = game.muted;
     explosionSound.muted = game.muted;
     gameOverSound.muted = game.muted;
+
     music.volume = game.muted ? 0 : 0.24;
     shootSound.volume = game.muted ? 0 : 0.22;
     explosionSound.volume = game.muted ? 0 : 0.3;
     gameOverSound.volume = game.muted ? 0 : 0.36;
-    return volume;
   }
 
   function syncAudioButtons() {
@@ -546,6 +572,7 @@
       return;
     }
 
+    audioElement.pause();
     audioElement.currentTime = 0;
     audioElement.volume = volume;
 
@@ -555,7 +582,6 @@
     }
   }
 
-  // Background stars and rendering helpers
   function buildStarfield() {
     game.stars = [];
 
@@ -740,7 +766,6 @@
     drawingSurface.textBaseline = "alphabetic";
   }
 
-  // Small utilities
   function randomBetween(min, max) {
     return min + Math.random() * (max - min);
   }
