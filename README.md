@@ -5,6 +5,11 @@
 ### Fight through enemy waves, survive the invasion, and push for a higher score.
 
 <img src="./images/alien-armada-preview.png" alt="Alien Armada Preview" width="900"/>
+<p align="center">
+  <a href="https://kcolisah.github.io/alien-armada/" target="_blank">
+    <img src="https://img.shields.io/badge/Play%20Alien%20Armada-Live-22c55e?style=for-the-badge" alt="Play Alien Armada"/>
+  </a>
+</p>
 
 </div>
 
